@@ -6,28 +6,26 @@ section .bss
     res resq 1
     rem resq 1
     temp resb 1
-
+    eaxc resd 1
+    ebxc resd 1
+    ecxc resd 1
+    edxc resd 1
 section .data
     hello DB "choose your option:",0xA,"add >> +",0xA,"subtract >> -",0xA,"multiply >> *",0xA,"divide >> /",0xA,">"
     hellol equ $-hello
-    
     wo DB "wrong option"
-    
     fnum DB "enter first number: "
     fnuml equ $-fnum
-    
     snum DB "enter second number: "
     snuml equ $-snum
-
     remainder DB " remainder: "
     reml equ $-remainder
-
     ten dd 10
-
 section .text
     global _start
     
 _start:
+
     mov eax, 4
     mov ebx, 1
     mov ecx, hello
@@ -213,8 +211,31 @@ done5:
     mov ebx, [nums]
     sub eax, ebx
     mov [res], eax
-
+    
     mov eax, [res]
+    
+    mov [ebxc], ebx
+    mov [ecxc], ecx
+    mov [edxc], edx
+    
+    test eax, eax
+    jns loop6s
+    
+    neg eax
+    mov [eaxc], eax
+    
+    mov eax, 4
+    mov ebx, 1
+    mov byte [temp], 0x2D
+    mov ecx, temp
+    mov edx, 1
+    int 0x80
+    
+    mov eax, [eaxc]
+    mov ebx, [ebxc]
+    mov edx, [edxc]
+    mov ecx, [ecxc]
+loop6s:
     mov ecx, buffer+10
     mov byte [ecx], 0
 loop6:
@@ -231,7 +252,7 @@ loop6:
     mov edx, buffer+10
     sub edx, ecx
     int 0x80
-
+    
     mov eax, 1
     xor ebx, ebx
     int 0x80
